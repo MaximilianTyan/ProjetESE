@@ -59,8 +59,30 @@ void Error_Handler(void);
 /* USER CODE END EFP */
 
 /* Private defines -----------------------------------------------------------*/
+#define IR_SENSOR_IN_Pin GPIO_PIN_0
+#define IR_SENSOR_IN_GPIO_Port GPIOC
+#define SPI1_CS_Pin GPIO_PIN_4
+#define SPI1_CS_GPIO_Port GPIOA
+#define TR1_IR_Pin GPIO_PIN_4
+#define TR1_IR_GPIO_Port GPIOC
+#define TR2_IR_Pin GPIO_PIN_5
+#define TR2_IR_GPIO_Port GPIOC
+#define TR3_IR_Pin GPIO_PIN_0
+#define TR3_IR_GPIO_Port GPIOB
+#define TR4_IR_Pin GPIO_PIN_1
+#define TR4_IR_GPIO_Port GPIOB
 #define DIR_Pin GPIO_PIN_12
 #define DIR_GPIO_Port GPIOB
+#define NFC_RST_Pin GPIO_PIN_8
+#define NFC_RST_GPIO_Port GPIOA
+#define LED1_CTRL_Pin GPIO_PIN_3
+#define LED1_CTRL_GPIO_Port GPIOB
+#define LED2_CTRL_Pin GPIO_PIN_4
+#define LED2_CTRL_GPIO_Port GPIOB
+#define LED3_CTRL_Pin GPIO_PIN_5
+#define LED3_CTRL_GPIO_Port GPIOB
+#define LED4_CTRL_Pin GPIO_PIN_6
+#define LED4_CTRL_GPIO_Port GPIOB
 
 /* USER CODE BEGIN Private defines */
 
