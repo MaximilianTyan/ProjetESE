@@ -63,14 +63,6 @@ void Error_Handler(void);
 #define IR_SENSOR_IN_GPIO_Port GPIOC
 #define SPI1_CS_Pin GPIO_PIN_4
 #define SPI1_CS_GPIO_Port GPIOA
-#define TR1_IR_ADC_IN14_Pin GPIO_PIN_4
-#define TR1_IR_ADC_IN14_GPIO_Port GPIOC
-#define TR2_IR_ADC_IN15_Pin GPIO_PIN_5
-#define TR2_IR_ADC_IN15_GPIO_Port GPIOC
-#define TR3_IR_ADC_IN8_Pin GPIO_PIN_0
-#define TR3_IR_ADC_IN8_GPIO_Port GPIOB
-#define TR4_IR_ADC_IN9_Pin GPIO_PIN_1
-#define TR4_IR_ADC_IN9_GPIO_Port GPIOB
 #define DIR_CTRL_Pin GPIO_PIN_12
 #define DIR_CTRL_GPIO_Port GPIOB
 #define STEP_PWM_Pin GPIO_PIN_13

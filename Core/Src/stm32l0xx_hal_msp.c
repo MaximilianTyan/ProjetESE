@@ -104,12 +104,12 @@ void HAL_ADC_MspInit(ADC_HandleTypeDef* hadc)
     PB0     ------> ADC_IN8
     PB1     ------> ADC_IN9
     */
-    GPIO_InitStruct.Pin = TR1_IR_ADC_IN14_Pin|TR2_IR_ADC_IN15_Pin;
+    GPIO_InitStruct.Pin = GPIO_PIN_4|GPIO_PIN_5;
     GPIO_InitStruct.Mode = GPIO_MODE_ANALOG;
     GPIO_InitStruct.Pull = GPIO_NOPULL;
     HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
 
-    GPIO_InitStruct.Pin = TR3_IR_ADC_IN8_Pin|TR4_IR_ADC_IN9_Pin;
+    GPIO_InitStruct.Pin = GPIO_PIN_0|GPIO_PIN_1;
     GPIO_InitStruct.Mode = GPIO_MODE_ANALOG;
     GPIO_InitStruct.Pull = GPIO_NOPULL;
     HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
@@ -144,9 +144,9 @@ void HAL_ADC_MspDeInit(ADC_HandleTypeDef* hadc)
     PB0     ------> ADC_IN8
     PB1     ------> ADC_IN9
     */
-    HAL_GPIO_DeInit(GPIOC, TR1_IR_ADC_IN14_Pin|TR2_IR_ADC_IN15_Pin);
+    HAL_GPIO_DeInit(GPIOC, GPIO_PIN_4|GPIO_PIN_5);
 
-    HAL_GPIO_DeInit(GPIOB, TR3_IR_ADC_IN8_Pin|TR4_IR_ADC_IN9_Pin);
+    HAL_GPIO_DeInit(GPIOB, GPIO_PIN_0|GPIO_PIN_1);
 
   /* USER CODE BEGIN ADC1_MspDeInit 1 */
 
