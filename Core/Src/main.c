@@ -61,6 +61,17 @@ uint8_t current_section = 0;
 ARM_STATE arm_state;
 
 uint8_t uartRxByte = 0x00;
+
+uint32_t adcValue1 = 0;
+uint32_t adcValue2 = 0;
+uint32_t adcValue3 = 0;
+uint32_t adcValue4 = 0;
+
+float tension1 = 0.0;
+float tension2 = 0.0;
+float tension3 = 0.0;
+float tension4 = 0.0;
+
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -352,6 +363,82 @@ int main(void)
 	  //__HAL_TIM_SET_COMPARE(&htim2, TIM_CHANNEL_2, 400);
 	  //__HAL_TIM_SET_COMPARE(&htim2, TIM_CHANNEL_3, 2000);
 	  //__HAL_TIM_SET_COMPARE(&htim2, TIM_CHANNEL_4, 1000);
+  	// Attendre que la conversion soit terminée
+
+	  // Lancer les conversions
+	   HAL_ADC_Start(&hadc);
+
+	   // Attendre que la conversion soit terminée
+	   if (HAL_ADC_PollForConversion(&hadc, 100) == HAL_OK)
+	   {
+	     adcValue1 = HAL_ADC_GetValue(&hadc);  // Canal 14
+
+	  }
+
+	   if (HAL_ADC_PollForConversion(&hadc, 100) == HAL_OK)
+	   {
+	     adcValue2 = HAL_ADC_GetValue(&hadc);  // Canal 15
+
+	  }
+	   if (HAL_ADC_PollForConversion(&hadc, 100) == HAL_OK)
+	   {
+	     adcValue3 = HAL_ADC_GetValue(&hadc);  // Canal 14
+
+	  }
+
+	   if (HAL_ADC_PollForConversion(&hadc, 100) == HAL_OK)
+	   {
+	     adcValue4 = HAL_ADC_GetValue(&hadc);  // Canal 15
+
+	  }
+	  HAL_ADC_Stop(&hadc);
+
+	  // Convertir en tension
+	  tension1 = (float)adcValue1 * 3.3 / 4095;
+	  tension2 = (float)adcValue2 * 3.3 / 4095;
+	  tension3 = (float)adcValue3 * 3.3 / 4095;
+	  tension4 = (float)adcValue4 * 3.3 / 4095;
+
+
+
+	  // Contrôler les LED en fonction des tensions
+	  if (tension1 > 2.0)
+	  {
+		  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_3, GPIO_PIN_SET);
+	  }
+	  else
+	  {
+		  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_3, GPIO_PIN_RESET);
+	  }
+
+	  if (tension2 > 2.0)
+	  {
+		  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_4, GPIO_PIN_SET);
+	  }
+	  else
+	  {
+		  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_4, GPIO_PIN_RESET);
+	  }
+	  if (tension3 > 2.0)
+	  {
+		  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_5, GPIO_PIN_SET);
+	  }
+	  else
+	  {
+		  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_5, GPIO_PIN_RESET);
+	  }
+
+	  if (tension4 > 2.0)
+	  {
+		  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_6, GPIO_PIN_SET);
+	  }
+	  else
+	  {
+		  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_6, GPIO_PIN_RESET);
+	  }
+
+	  HAL_Delay(100);
+
 
   }
   /* USER CODE END 3 */
@@ -431,10 +518,10 @@ static void MX_ADC_Init(void)
   hadc.Init.OversamplingMode = DISABLE;
   hadc.Init.ClockPrescaler = ADC_CLOCK_SYNC_PCLK_DIV2;
   hadc.Init.Resolution = ADC_RESOLUTION_12B;
-  hadc.Init.SamplingTime = ADC_SAMPLETIME_1CYCLE_5;
+  hadc.Init.SamplingTime = ADC_SAMPLETIME_160CYCLES_5;
   hadc.Init.ScanConvMode = ADC_SCAN_DIRECTION_FORWARD;
   hadc.Init.DataAlign = ADC_DATAALIGN_RIGHT;
-  hadc.Init.ContinuousConvMode = DISABLE;
+  hadc.Init.ContinuousConvMode = ENABLE;
   hadc.Init.DiscontinuousConvMode = DISABLE;
   hadc.Init.ExternalTrigConvEdge = ADC_EXTERNALTRIGCONVEDGE_NONE;
   hadc.Init.ExternalTrigConv = ADC_SOFTWARE_START;
