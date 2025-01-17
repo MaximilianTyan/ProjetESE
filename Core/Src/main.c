@@ -59,8 +59,10 @@ UART_HandleTypeDef huart2;
 uint8_t current_section = 0;
 #define TIMER_PERIOD 20000
 ARM_STATE arm_state;
-
+uint32_t current_rfid = 0x00;
+bool login_successful = false;
 uint8_t uartRxByte = 0x00;
+uint8_t uartTxBuffer[128];
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -338,7 +340,25 @@ int main(void)
   	  //HAL_Delay(2000);
   	  //ControlMotor(0, 180);
   	  HAL_Delay(500);
-  	  printf("Looping...\n");
+
+	  if (!login_successful) {
+		  if (get_nfc_id(&current_rfid) && current_rfid != 0) {
+	            SENSOR_COMM_OPTIONS options = {
+	            	.is_write = false,
+					.is_answer = true,
+					.echo_write = false,
+					.is_spont_answ = true
+	            };
+				uint8_t answer[4];
+				answer[0] = (current_rfid >> 0 * 8) & 0xFF;
+				answer[1] = (current_rfid >> 1 * 8) & 0xFF;
+				answer[2] = (current_rfid >> 2 * 8) & 0xFF;
+				answer[3] = (current_rfid >> 3 * 8) & 0xFF;
+				sensor_send_cmd(SENSOR_DEVICE_RFID, options, answer, 4);
+				login_successful = true;
+		  }
+	  }
+
 
 
 	  //robotique bras
@@ -747,7 +767,8 @@ int __io_putchar(int ch) {
 }
 
 bool device_send_uart(uint8_t *bytes, uint8_t bytes_len) {
-	return HAL_UART_Transmit_IT(&huart2, bytes, bytes_len) == HAL_OK;
+	memcpy(uartTxBuffer, bytes, bytes_len);
+	return HAL_UART_Transmit_IT(&huart2, uartTxBuffer, bytes_len) == HAL_OK;
 }
 
 
@@ -764,13 +785,8 @@ uint8_t sensor_hw_get_battery_level() {
 }
 
 uint32_t sensor_hw_get_rfid() {
-	uint32_t id;
-	if (get_nfc_id(&id)) {
-		return id;
-	} else {
-		printf("Failed to read NFC");
-		return 0;
-	}
+	get_nfc_id(&current_rfid);
+	return current_rfid;
 }
 
 uint8_t sensor_hw_read_ir_telemeter(uint8_t ir_telem_id) {
