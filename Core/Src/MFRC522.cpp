@@ -104,9 +104,9 @@ void MFRC522::PCD_WriteRegister(uint8_t reg, uint8_t value)
 //  (void) m_SPI.write(reg & 0x7E);
 //  (void) m_SPI.write(value);
   uint8_t error = HAL_SPI_Transmit(hspi, &cmd_w, 1, 500);
-  if (error != HAL_OK) exit(error);
+//  if (error != HAL_OK) exit(error);
   error =  HAL_SPI_Transmit(hspi, &value, 1, 500);
-  if (error != HAL_OK) exit(error);
+//  if (error != HAL_OK) exit(error);
 
   HAL_GPIO_WritePin(cs_port, cs_pin, GPIO_PIN_SET); /* Release SPI Chip MFRC522 */
 } // End PCD_WriteRegister()
@@ -123,12 +123,12 @@ void MFRC522::PCD_WriteRegister(uint8_t reg, uint8_t count, uint8_t *values)
   uint8_t cmd_w = reg & 0x7E;
 //  (void) m_SPI.write(reg & 0x7E);
   uint8_t error = HAL_SPI_Transmit(hspi, &cmd_w, 1, 500);
-  if (error != HAL_OK) exit(error);
+//  if (error != HAL_OK) exit(error);
 
   for (uint8_t index = 0; index < count; index++)
   {
 	  error = HAL_SPI_Transmit(hspi, &(values[index]), 1, 500);
-	  if (error != HAL_OK) exit(error);
+//	  if (error != HAL_OK) exit(error);
 
 //    (void) m_SPI.write(values[index]);
   }
@@ -151,12 +151,12 @@ uint8_t MFRC522::PCD_ReadRegister(uint8_t reg)
   uint8_t cmd_r = reg | 0x80;
 //  (void) m_SPI.write(0x80 | reg);
   uint8_t error = HAL_SPI_Transmit(hspi, &cmd_r, 1, 500);
-  if (error != HAL_OK)  exit(error);
+//  if (error != HAL_OK) return value;
 
   // Read the value back. Send 0 to stop reading.
 //  value = m_SPI.write(0);
   error = HAL_SPI_TransmitReceive(hspi, &zero, &value, 1, 500);
-  if (error != HAL_OK) exit(error);
+//  if (error != HAL_OK) return value;
 
   HAL_GPIO_WritePin(cs_port, cs_pin, GPIO_PIN_SET); /* Release SPI Chip MFRC522 */
 
@@ -179,7 +179,7 @@ void MFRC522::PCD_ReadRegister(uint8_t reg, uint8_t count, uint8_t *values, uint
   count--;                       // One read is performed outside of the loop
 //  (void) m_SPI.write(address);   // Tell MFRC522 which address we want to read
   uint8_t error = HAL_SPI_Transmit(hspi, &address, 1, 500);
-  if (error != HAL_OK) exit(error);
+//  if (error != HAL_OK) exit(error);
 
   while (index < count)
   {
@@ -196,7 +196,7 @@ void MFRC522::PCD_ReadRegister(uint8_t reg, uint8_t count, uint8_t *values, uint
 //      uint8_t value = m_SPI.write(address);
       uint8_t value;
       error = HAL_SPI_TransmitReceive(hspi, &address, &value, 1, 500);
-      if (error != HAL_OK) exit(error);
+//      if (error != HAL_OK) exit(error);
 
       // Apply mask to both current value of values[0] and the new data in value.
       values[0] = (values[index] & ~mask) | (value & mask);
@@ -206,7 +206,7 @@ void MFRC522::PCD_ReadRegister(uint8_t reg, uint8_t count, uint8_t *values, uint
       // Read value and tell that we want to read the same address again.
 //      values[index] = m_SPI.write(address);
     	error = HAL_SPI_TransmitReceive(hspi, &address, &(values[index]), 1, 500);
-    	if (error != HAL_OK) exit(error);
+//    	if (error != HAL_OK) exit(error);
     }
 
     index++;
@@ -214,7 +214,7 @@ void MFRC522::PCD_ReadRegister(uint8_t reg, uint8_t count, uint8_t *values, uint
 
 //  values[index] = m_SPI.write(0); // Read the final byte. Send 0 to stop reading.
   error = HAL_SPI_TransmitReceive(hspi, &zero, &(values[index]), 1, 500);
-  if (error != HAL_OK) exit(error);
+//  if (error != HAL_OK) exit(error);
 
 
   HAL_GPIO_WritePin(cs_port, cs_pin, GPIO_PIN_SET);                       /* Release SPI Chip MFRC522 */
