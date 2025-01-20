@@ -74,6 +74,17 @@ float tension2 = 0.0;
 float tension3 = 0.0;
 float tension4 = 0.0;
 
+typedef enum {
+	ROBOT_DIRECTION_STOP = 0x00,
+	ROBOT_DIRECTION_FORWARD = 0x01,
+	ROBOT_DIRECTION_BACKWARDS = 0x02,
+	ROBOT_DIRECTION_TURN_LEFT = 0x03,
+	ROBOT_DIRECTION_TURN_RIGHT = 0x04
+} ROBOT_DIRECTION;
+
+ROBOT_DIRECTION current_direction = ROBOT_DIRECTION_FORWARD;
+bool is_follow_enabled = false;
+
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -320,37 +331,7 @@ int main(void)
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
-
-	  //test
-	  //Set_Direction(1);
-	  //HAL_Delay(10000);
-	  //Set_Direction(0);
-	  //HAL_Delay(10000);
-
-	  //control type 1
-	  /*
-	  RotateToSection(0);
-  	  HAL_Delay(3000);
-  	  RotateToSection(1);
-  	  HAL_Delay(3000);
-	  RotateToSection(2);
-	  HAL_Delay(3000);
-	  RotateToSection(3);
-	  HAL_Delay(3000);
-	  RotateToSection(4);
-	  HAL_Delay(3000);
-	  RotateToSection(5);
-  	  HAL_Delay(3000);
-  	  RotateToSection(6);
-  	  HAL_Delay(3000);
-	  RotateToSection(7);
-	  HAL_Delay(3000);
-	  */
- 	  //control type 2
- 	  //ControlMotor(1, 90);
-  	  //HAL_Delay(2000);
-  	  //ControlMotor(0, 180);
-  	  HAL_Delay(500);
+  	  HAL_Delay(100);
 
 	  if (!login_successful) {
 		  if (get_nfc_id(&current_rfid) && current_rfid != 0) {
@@ -371,18 +352,6 @@ int main(void)
 	  }
 
 
-
-	  //robotique bras
-
-  	  //get_ready();
-  	  //catch();
-  	  //lift_up();
-
-	  //test
-	  //__HAL_TIM_SET_COMPARE(&htim2, TIM_CHANNEL_1, 400);//
-	  //__HAL_TIM_SET_COMPARE(&htim2, TIM_CHANNEL_2, 400);
-	  //__HAL_TIM_SET_COMPARE(&htim2, TIM_CHANNEL_3, 2000);
-	  //__HAL_TIM_SET_COMPARE(&htim2, TIM_CHANNEL_4, 1000);
   	// Attendre que la conversion soit terminée
 
 	  // Lancer les conversions
@@ -422,43 +391,37 @@ int main(void)
 
 
 	  // Contrôler les LED en fonction des tensions
-	  if (tension1 > 2.0)
-	  {
+	  if (tension1 > 2.0) {
 		  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_3, GPIO_PIN_SET);
-	  }
-	  else
-	  {
+	  } else {
 		  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_3, GPIO_PIN_RESET);
 	  }
 
-	  if (tension2 > 2.0)
-	  {
+	  if (tension2 > 2.0) {
 		  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_4, GPIO_PIN_SET);
-	  }
-	  else
-	  {
+	  } else {
 		  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_4, GPIO_PIN_RESET);
 	  }
-	  if (tension3 > 2.0)
-	  {
+	  if (tension3 > 2.0) {
 		  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_5, GPIO_PIN_SET);
-	  }
-	  else
-	  {
+	  } else {
 		  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_5, GPIO_PIN_RESET);
 	  }
 
-	  if (tension4 > 2.0)
-	  {
+	  if (tension4 > 2.0) {
 		  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_6, GPIO_PIN_SET);
-	  }
-	  else
-	  {
+	  } else {
 		  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_6, GPIO_PIN_RESET);
 	  }
 
-	  HAL_Delay(100);
-
+	  current_direction = ROBOT_DIRECTION_STOP;
+	  SENSOR_COMM_OPTIONS options = {
+		  .is_answer = true,
+		  .is_write = false,
+		  .echo_write = false,
+		  .is_spont_answ = true
+	  };
+	  sensor_send_cmd(SENSOR_DEVICE_IR_TELEMETERS, options, &current_direction, 1);
 
   }
   /* USER CODE END 3 */
@@ -876,8 +839,12 @@ uint32_t sensor_hw_get_rfid() {
 	return current_rfid;
 }
 
-uint8_t sensor_hw_read_ir_telemeter(uint8_t ir_telem_id) {
-	return 0;
+uint8_t sensor_hw_get_set_ir_telemeter(bool set, uint8_t ir_telem_id, uint8_t ir_telem_distance) {
+	if (set) {
+		is_follow_enabled = (ir_telem_distance != 0);
+	} else {
+		return current_direction;
+	}
 }
 
 bool sensor_hw_read_line_follower(uint8_t line_follow_id) {

@@ -94,7 +94,7 @@ extern void sensor_cb_error(bool spontaneous, uint8_t error);
 #ifdef SENSOR_PLATFORM_SENSOR
 extern uint8_t sensor_hw_get_battery_level();
 extern uint32_t sensor_hw_get_rfid();
-extern uint8_t sensor_hw_read_ir_telemeter(uint8_t ir_telem_id);
+extern uint8_t sensor_hw_get_set_ir_telemeter(bool set, uint8_t ir_telem_id, uint8_t ir_telem_distance);
 extern bool sensor_hw_read_line_follower(uint8_t line_follow_id);
 extern uint8_t sensor_hw_get_set_led_value(bool set, uint8_t led_id, uint8_t led_value);
 extern uint8_t sensor_hw_get_set_tool_selection(bool set, uint8_t tool_id);
@@ -246,10 +246,10 @@ static void dispatch_uart_cb(SENSOR_UART_FRAME frame) {
             }
 #endif
 #ifdef SENSOR_PLATFORM_SENSOR
-            if (!options.is_answer && !options.is_write) {
+            if (!options.is_answer) {
                 options.is_answer = true;
                 uint8_t ir_telem_id = frame.data[0];
-                uint8_t ir_telem_distance = sensor_hw_read_ir_telemeter(ir_telem_id);
+                uint8_t ir_telem_distance = sensor_hw_get_set_ir_telemeter(options.is_write, ir_telem_id, ir_telem_distance);
                 uint8_t answer[2] = {ir_telem_id, ir_telem_distance};
                 sensor_send_cmd(SENSOR_DEVICE_IR_TELEMETERS, options, answer, 2);
             }
