@@ -391,37 +391,45 @@ int main(void)
 
 
 	  // Contrôler les LED en fonction des tensions
-	  if (tension1 > 2.0) {
+	  ROBOT_DIRECTION new_direction = ROBOT_DIRECTION_FORWARD;
+
+	  if (tension1 > 2.75) {
 		  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_3, GPIO_PIN_SET);
+		  new_direction = ROBOT_DIRECTION_STOP;
 	  } else {
 		  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_3, GPIO_PIN_RESET);
 	  }
 
-	  if (tension2 > 2.0) {
+	  if (tension2 > 2.75) {
 		  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_4, GPIO_PIN_SET);
+		  new_direction = ROBOT_DIRECTION_STOP;
 	  } else {
 		  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_4, GPIO_PIN_RESET);
 	  }
-	  if (tension3 > 2.0) {
+	  if (tension3 > 2.75) {
 		  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_5, GPIO_PIN_SET);
+		  new_direction = ROBOT_DIRECTION_STOP;
 	  } else {
 		  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_5, GPIO_PIN_RESET);
 	  }
 
-	  if (tension4 > 2.0) {
+	  if (tension4 > 2.75) {
 		  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_6, GPIO_PIN_SET);
+		  new_direction = ROBOT_DIRECTION_STOP;
 	  } else {
 		  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_6, GPIO_PIN_RESET);
 	  }
 
-	  current_direction = ROBOT_DIRECTION_STOP;
-	  SENSOR_COMM_OPTIONS options = {
-		  .is_answer = true,
-		  .is_write = false,
-		  .echo_write = false,
-		  .is_spont_answ = true
-	  };
-	  sensor_send_cmd(SENSOR_DEVICE_IR_TELEMETERS, options, &current_direction, 1);
+	  if (new_direction != current_direction) {
+		  SENSOR_COMM_OPTIONS options = {
+			  .is_answer = true,
+			  .is_write = false,
+			  .echo_write = false,
+			  .is_spont_answ = true
+		  };
+		  sensor_send_cmd(SENSOR_DEVICE_IR_TELEMETERS, options, &new_direction, 1);
+		  current_direction = new_direction;
+	  }
 
   }
   /* USER CODE END 3 */
