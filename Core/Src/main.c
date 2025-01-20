@@ -42,7 +42,7 @@
 
 /* Private macro -------------------------------------------------------------*/
 /* USER CODE BEGIN PM */
-
+//#define USE_PRINTF
 /* USER CODE END PM */
 
 /* Private variables ---------------------------------------------------------*/
@@ -818,9 +818,10 @@ static void MX_GPIO_Init(void)
 }
 
 /* USER CODE BEGIN 4 */
-
 int __io_putchar(int ch) {
+#ifdef USE_PRINTF
 	HAL_UART_Transmit(&huart2, (uint8_t *) &ch, 1, 0xFFFF);
+#endif
 	return ch;
 }
 
