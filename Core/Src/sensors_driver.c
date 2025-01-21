@@ -92,25 +92,41 @@ extern void sensor_cb_error(bool spontaneous, uint8_t error);
 
 // Hardware IO accessors
 #ifdef SENSOR_PLATFORM_SENSOR
+
 extern uint8_t sensor_hw_get_battery_level();
+
 extern uint32_t sensor_hw_get_rfid();
+
 extern uint8_t sensor_hw_get_set_ir_telemeter(bool set, uint8_t ir_telem_id, uint8_t ir_telem_distance);
+
 extern bool sensor_hw_read_line_follower(uint8_t line_follow_id);
+
 extern uint8_t sensor_hw_get_set_led_value(bool set, uint8_t led_id, uint8_t led_value);
+
 extern uint8_t sensor_hw_get_set_tool_selection(bool set, uint8_t tool_id);
+
 extern uint8_t sensor_hw_robot_get_set_servo(bool set, uint8_t servo_id, uint8_t servo_angle);
+
 extern uint8_t sensor_hw_robot_get_set_state(bool set, ARM_STATE state);
+
 #endif
 
 /* Private function prototypes -----------------------------------------------*/
 
 static uint8_t get_frame_length(SENSOR_UART_FRAME frame);
+
 static uint8_t get_device_data_length(SENSOR_DEVICE dev);
+
 static bool device_exists(SENSOR_DEVICE dev);
+
 static bool valid_arm_state(ARM_STATE state);
+
 static SENSOR_PARSING_ERROR uart_parse_frame(uint8_t *bytes, uint8_t bytes_len);
+
 static void dispatch_uart_cb(SENSOR_UART_FRAME frame);
+
 static SENSOR_PARSING_ERROR sensor_uart_parse_byte(uint8_t byte);
+
 static void store_byte(uint8_t byte);
 
 /* Private static functions ---------------------------------------------------------*/
@@ -138,8 +154,8 @@ static uint8_t get_device_data_length(SENSOR_DEVICE dev) {
         case SENSOR_DEVICE_ARM_STATE:
             return 1;
 #ifdef UART_ENABLE_ERROR_FEEDBACK
-        case SENSOR_DEVICE_ERRORS:
-            return 1;
+            case SENSOR_DEVICE_ERRORS:
+                return 1;
 #endif
         default:
             return 0;
@@ -249,7 +265,8 @@ static void dispatch_uart_cb(SENSOR_UART_FRAME frame) {
             if (!options.is_answer) {
                 options.is_answer = true;
                 uint8_t ir_telem_id = frame.data[0];
-                uint8_t ir_telem_distance = sensor_hw_get_set_ir_telemeter(options.is_write, ir_telem_id, ir_telem_distance);
+                uint8_t ir_telem_distance = sensor_hw_get_set_ir_telemeter(options.is_write, ir_telem_id,
+                                                                           ir_telem_distance);
                 uint8_t answer[2] = {ir_telem_id, ir_telem_distance};
                 sensor_send_cmd(SENSOR_DEVICE_IR_TELEMETERS, options, answer, 2);
             }
@@ -268,7 +285,7 @@ static void dispatch_uart_cb(SENSOR_UART_FRAME frame) {
                 options.is_answer = true;
                 uint8_t line_follow_id = frame.data[0];
                 bool line_follow_state = sensor_hw_read_line_follower(line_follow_id);
-                uint8_t answer[2] = {line_follow_id,line_follow_state != 0};
+                uint8_t answer[2] = {line_follow_id, line_follow_state != 0};
                 sensor_send_cmd(SENSOR_DEVICE_LINE_FOLLOWERS, options, answer, 2);
             }
 #endif
@@ -354,11 +371,11 @@ static void dispatch_uart_cb(SENSOR_UART_FRAME frame) {
         }
 #ifdef SENSOR_PLATFORM_SCREEN
 #ifdef UART_ENABLE_ERROR_FEEDBACK
-        case SENSOR_DEVICE_ERRORS: {
-            uint8_t error_id = frame.data[0];
-            sensor_cb_error(options.is_spont_answ, error_id);
-            break;
-        }
+            case SENSOR_DEVICE_ERRORS: {
+                uint8_t error_id = frame.data[0];
+                sensor_cb_error(options.is_spont_answ, error_id);
+                break;
+            }
 #endif
 #endif
         default:
@@ -445,7 +462,7 @@ SENSOR_ERROR sensor_send_cmd(SENSOR_DEVICE device, SENSOR_COMM_OPTIONS options, 
     memcpy(&uart_data[3], frame.data, frame.data_len);
     uart_data[uart_data_len - 1] = STOP_BYTE_VALUE;
 
-    if (!device_send_uart(uart_data,  uart_data_len)) {
+    if (!device_send_uart(uart_data, uart_data_len)) {
         return SENSOR_ERROR_UART_ERROR;
     }
     return SENSOR_ERROR_OK;
@@ -582,7 +599,7 @@ SENSOR_ERROR sensor_uart_query_rfid() {
 // RX Functions
 SENSOR_PARSING_ERROR sensor_uart_rx_cb(uint8_t *bytes, size_t bytes_len) {
     SENSOR_PARSING_ERROR status = SENSOR_PARSING_OK;
-    for (size_t i=0; i<bytes_len; i++) {
+    for (size_t i = 0; i < bytes_len; i++) {
         uint8_t byte = bytes[i];
         status = sensor_uart_parse_byte(byte);
         if (status != SENSOR_PARSING_OK) return status;

@@ -59,14 +59,14 @@ void Error_Handler(void);
 /* USER CODE END EFP */
 
 /* Private defines -----------------------------------------------------------*/
-#define IR_SENSOR_IN_Pin GPIO_PIN_0
-#define IR_SENSOR_IN_GPIO_Port GPIOC
 #define SPI1_CS_Pin GPIO_PIN_4
 #define SPI1_CS_GPIO_Port GPIOA
 #define DIR_CTRL_Pin GPIO_PIN_12
 #define DIR_CTRL_GPIO_Port GPIOB
 #define STEP_PWM_Pin GPIO_PIN_13
 #define STEP_PWM_GPIO_Port GPIOB
+#define IR_SENSOR_IN_Pin GPIO_PIN_7
+#define IR_SENSOR_IN_GPIO_Port GPIOC
 #define NFC_RST_Pin GPIO_PIN_9
 #define NFC_RST_GPIO_Port GPIOA
 #define LED1_CTRL_Pin GPIO_PIN_3
